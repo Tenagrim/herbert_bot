@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/herbert_bot
+    username: herbert
+    password: botbasepassword
+  jpa:
+    hibernate:
+      ddl-auto: update
+bot:
+  name: Herbert
+  token: 2059520730:AAHW5PmY2nP98qUMvxY7s4rTeLqyd9kxT60
+
+passwords:
+  user: bekano
+  admin: anathema
