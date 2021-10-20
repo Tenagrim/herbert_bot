@@ -58,6 +58,8 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>HerbertBot</finalName>
+        <defaultGoal>package</defaultGoal>
         <plugins>
             <plugin>
                 <groupId>com.heroku.sdk</groupId>
@@ -117,5 +119,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
