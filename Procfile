@@ -1,1 +1,1 @@
-worker: sh target/bin/herbert_bot
+web: sh target/bin/herbert_bot
