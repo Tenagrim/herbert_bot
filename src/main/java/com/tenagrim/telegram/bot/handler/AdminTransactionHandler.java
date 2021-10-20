@@ -28,12 +28,13 @@ import static com.tenagrim.telegram.util.TelegramUtil.createMessageTemplate;
 @Component
 @RequiredArgsConstructor
 public class AdminTransactionHandler implements Handler {
-    private static final String ALL_USERS = "/all_users";
-    private static final String WATCH_USER = "/watch_user";
+    private static final String ALL_USERS = "/all-users";
+    private static final String WATCH_USER = "/watch-user";
     private static final String MENU = "/menu";
-    private static final String USER_TR = "/user_tr";
-    private static final String ACCEPT_TR = "/accept_tr";
-    private static final String DECLINE_TR = "/decline_tr";
+    private static final String USER_TR = "/user-tr";
+    private static final String ACCEPT_TR = "/accept-tr";
+    private static final String DECLINE_TR = "/decline-tr";
+    private static final String HELP = "/help";
     private final UserRepository userRepository;
     private final WatcherRepository watcherRepository;
     private final TransactionRepository transactionRepository;
@@ -51,6 +52,8 @@ public class AdminTransactionHandler implements Handler {
                     return accept_tr(user, message);
                 else if (message.startsWith(DECLINE_TR))
                     return decline_tr(user, message);
+                else if (message.startsWith(HELP))
+                    return help(user,message);
                 else
                     return menu(user);
             } catch (InvalidArgumentException e ){
@@ -66,6 +69,11 @@ public class AdminTransactionHandler implements Handler {
             }
     }
 
+    private List<PartialBotApiMethod<? extends Serializable>> help(User user, String message){
+        return List.of(createMessageTemplate(user)
+                .setText("/help\n/menu\n/watch-user <user-id>\n/user-tr <user-id>\n/all-users\n/accept-tr <tr-id>\n/decline-tr <tr-id>"));
+    }
+
     private List<PartialBotApiMethod<? extends Serializable>> accept_tr(User user, String message){
         Transaction transaction = getTransactionFromCommand(message);
         transaction.setApproved(true);
@@ -73,7 +81,8 @@ public class AdminTransactionHandler implements Handler {
         return List.of(createMessageTemplate(user)
                 .setText("Запись принята")
                 .setReplyMarkup(new InlineKeyboardMarkup()
-                        .setKeyboard(List.of( List.of(createInlineKeyboardButton("Все записи", USER_TR + " " + transaction.getUser().getChatId()))))));
+                        .setKeyboard(List.of( List.of(createInlineKeyboardButton("Все записи", USER_TR + " " + transaction.getUser().getChatId()))))),
+                createMessageTemplate(transaction.getUser()).setText("Запись принята:\n" + transaction.toString()));
     }
 
     private List<PartialBotApiMethod<? extends Serializable>> decline_tr(User user, String message){
@@ -120,7 +129,7 @@ public class AdminTransactionHandler implements Handler {
     private List<PartialBotApiMethod<? extends Serializable>> all_users(User user) {
         List<User> users = userRepository.findAll();
         String usersString = users.stream()
-                .map(Object::toString)
+                .map(u-> u.getChatId() + " | " + u.getBotState().toString())
                 .collect(Collectors.joining("\n"));
         return List.of(createMessageTemplate(user).setText(usersString));
     }

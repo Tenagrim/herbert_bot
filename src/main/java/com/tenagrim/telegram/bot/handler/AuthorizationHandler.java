@@ -46,7 +46,8 @@ public class AuthorizationHandler implements Handler {
         userRepository.save(user);
         List<SendMessage> messages = new ArrayList<>();
         messages.add(createMessageTemplate(user).setText(response));
-        addMessageToAdmin(user, messages);
+        if(user.getBotState() == State.USER)
+            addMessageToAdmin(user, messages);
         return List.copyOf(messages);
     }
 
