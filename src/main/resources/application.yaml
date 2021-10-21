@@ -13,3 +13,5 @@ bot:
 passwords:
   user: bekano
   admin: anathema
+server:
+  port: ${PORT:5000}
